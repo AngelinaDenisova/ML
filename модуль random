@@ -1,0 +1,60 @@
+# id — случайное пятизначное число, логин — случайная последовательность из 6 маленьких английских букв, пароль — случайная последовательность из 10 неповторяющихся больших и
+# маленьких английских букв и цифр
+# Создайте функцию генерации id, функцию генерации логина и функцию генерации пароля. С использованием этих трёх функций напишите функцию, генерирующую список из N троек вида
+# (id, логин, пароль),
+# в которых ни id, ни логины, ни пароли не повторяются (при этом повторный вызов функции не должен учитывать результаты предыдущей генерации). Также должны выполняться следующие условия:
+(гласными считаем «aeiou»)
+# id не делится нацело на 5, логин — палиндром, в пароле есть хотя бы одна нечётная цифра и одна заглавная буква
+
+import random
+import string
+
+# Функция генерации уникального id
+def generate_id():
+    while True:
+        id_num = random.randint(10000, 99999)  # Случайное пятизначное число
+        if id_num % 5 != 0:  # Условие: не делится нацело на 5
+            return id_num
+
+# Функция генерации уникального логина
+def generate_login():
+    while True:
+        login = ''.join(random.choices(string.ascii_lowercase, k=6))
+        if login == login[::-1]:  # Условие: палиндром
+            return login
+
+# Функция генерации уникального пароля
+def generate_password():
+    while True:
+        password_chars = random.sample(string.ascii_letters + string.digits, 10)  # 10 уникальных символов
+        password = ''.join(password_chars)
+        
+        if any(c.isupper() for c in password) and any(c.isdigit() and int(c) % 2 == 1 for c in password):
+            return password
+
+# Основная функция для генерации N троек уникальных (id, логин, пароль)
+def generate_unique_tuples(n):
+    unique_ids = set()
+    unique_logins = set()
+    unique_passwords = set()
+    result = []
+
+    while len(result) < n:
+        id_num = generate_id()
+        login = generate_login()
+        password = generate_password()
+        
+        if id_num not in unique_ids and login not in unique_logins and password not in unique_passwords:
+            unique_ids.add(id_num)
+            unique_logins.add(login)
+            unique_passwords.add(password)
+            result.append((id_num, login, password))
+
+    return result
+
+# Пример вызова функции
+if __name__ == "__main__":
+    n = int(input("Введите количество троек: "))
+    unique_tuples = generate_unique_tuples(n)
+    for entry in unique_tuples:
+        print(entry)
